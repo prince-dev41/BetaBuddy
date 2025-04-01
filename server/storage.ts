@@ -1,8 +1,25 @@
 import { users, type User, type InsertUser, apps, type App, type InsertApp, feedback, type Feedback, type InsertFeedback, appTesters, type AppTester, type InsertAppTester } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import pg from "pg";
+const { Pool } = pg;
+import { drizzle } from "drizzle-orm/node-postgres";
+import { eq, desc, asc, and } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
 
+const PostgresSessionStore = connectPg(session);
 const MemoryStore = createMemoryStore(session);
+
+// Helper function for password hashing
+const scryptAsync = promisify(scrypt);
+
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
 
 export interface IStorage {
   // User methods
@@ -33,15 +50,334 @@ export interface IStorage {
   updateAppTesterStatus(id: number, status: string): Promise<AppTester | undefined>;
 
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
+  private pool: pg.Pool;
+  private db: ReturnType<typeof drizzle>;
+  sessionStore: session.Store;
+
+  constructor() {
+    // Create the database pool
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+
+    // Initialize drizzle with the PostgreSQL pool
+    this.db = drizzle(this.pool);
+
+    // Set up session store
+    this.sessionStore = new PostgresSessionStore({
+      pool: this.pool,
+      createTableIfMissing: true,
+    });
+
+    // Seed the admin user if it doesn't exist
+    this.seedAdminUser();
+  }
+
+  private async seedAdminUser() {
+    const existingAdmin = await this.getUserByUsername('admin');
+    if (!existingAdmin) {
+      await this.createUser({
+        username: "admin",
+        email: "admin@betabuddy.com",
+        password: await hashPassword("admin"),
+        name: "Admin User",
+        bio: "BetaBuddy administrator",
+        avatar: "",
+        specialization: "System Administrator"
+      });
+      console.log("Admin user created");
+    }
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.username, username.toLowerCase()))
+      .limit(1);
+    return result[0];
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email.toLowerCase()))
+      .limit(1);
+    return result[0];
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    // Normalize email and username to lowercase
+    const normalizedUser = {
+      ...insertUser,
+      username: insertUser.username.toLowerCase(),
+      email: insertUser.email.toLowerCase()
+    };
+
+    const [user] = await this.db.insert(users).values(normalizedUser).returning();
+    return user;
+  }
+
+  async updateUserPoints(userId: number, points: number): Promise<User | undefined> {
+    const user = await this.getUser(userId);
+    if (!user) return undefined;
+
+    const [updatedUser] = await this.db
+      .update(users)
+      .set({ points: user.points + points })
+      .where(eq(users.id, userId))
+      .returning();
+
+    return updatedUser;
+  }
+
+  async getTopTesters(limit: number): Promise<User[]> {
+    return await this.db
+      .select()
+      .from(users)
+      .orderBy(desc(users.points))
+      .limit(limit);
+  }
+
+  // App methods
+  async getApp(id: number): Promise<App | undefined> {
+    const result = await this.db.select().from(apps).where(eq(apps.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getApps(limit?: number, type?: string): Promise<App[]> {
+    if (type) {
+      const query = this.db.select().from(apps).where(eq(apps.type, type)).orderBy(desc(apps.createdAt));
+      return limit ? await query.limit(limit) : await query;
+    } else {
+      const query = this.db.select().from(apps).orderBy(desc(apps.createdAt));
+      return limit ? await query.limit(limit) : await query;
+    }
+  }
+
+  async getAppsByUser(userId: number): Promise<App[]> {
+    return await this.db
+      .select()
+      .from(apps)
+      .where(eq(apps.userId, userId))
+      .orderBy(desc(apps.createdAt));
+  }
+
+  async createApp(insertApp: InsertApp): Promise<App> {
+    try {
+      // Prepare the app data with proper handling of nulls
+      const appData = {
+        title: insertApp.title,
+        description: insertApp.description,
+        type: insertApp.type,
+        shortDescription: insertApp.shortDescription || null,
+        downloadUrl: insertApp.downloadUrl,
+        screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,
+        rewardPoints: insertApp.rewardPoints || 100,
+        userId: insertApp.userId
+      };
+      
+      // Use a direct SQL query for insertion to avoid type issues
+      const result = await this.pool.query(`
+        INSERT INTO apps (
+          title, description, type, shortDescription, downloadUrl, 
+          screenshots, rewardPoints, userId
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8
+        ) RETURNING *
+      `, [
+        appData.title,
+        appData.description,
+        appData.type,
+        appData.shortDescription,
+        appData.downloadUrl,
+        appData.screenshots,
+        appData.rewardPoints,
+        appData.userId
+      ]);
+      
+      if (result.rows.length > 0) {
+        return result.rows[0] as App;
+      }
+      
+      throw new Error("Failed to create app");
+    } catch (error) {
+      console.error("Error in createApp:", error);
+      throw error;
+    }
+  }
+
+  async incrementTesterCount(appId: number): Promise<App | undefined> {
+    const app = await this.getApp(appId);
+    if (!app) return undefined;
+
+    const [updatedApp] = await this.db
+      .update(apps)
+      .set({ testerCount: app.testerCount + 1 })
+      .where(eq(apps.id, appId))
+      .returning();
+
+    return updatedApp;
+  }
+
+  // Feedback methods
+  async getFeedback(id: number): Promise<Feedback | undefined> {
+    const result = await this.db.select().from(feedback).where(eq(feedback.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getFeedbackByApp(appId: number): Promise<Feedback[]> {
+    return await this.db
+      .select()
+      .from(feedback)
+      .where(eq(feedback.appId, appId))
+      .orderBy(desc(feedback.createdAt));
+  }
+
+  async createFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
+    try {
+      // Prepare the feedback data with proper handling of nulls
+      const feedbackData = {
+        appId: insertFeedback.appId,
+        userId: insertFeedback.userId,
+        rating: insertFeedback.rating,
+        content: insertFeedback.content,
+        bugs: insertFeedback.bugs || null,
+        suggestions: insertFeedback.suggestions || null
+      };
+      
+      // Use a direct SQL query for insertion to avoid type issues
+      const result = await this.pool.query(`
+        INSERT INTO feedback (
+          appId, userId, rating, content, bugs, suggestions
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6
+        ) RETURNING *
+      `, [
+        feedbackData.appId,
+        feedbackData.userId,
+        feedbackData.rating,
+        feedbackData.content,
+        feedbackData.bugs,
+        feedbackData.suggestions
+      ]);
+      
+      if (result.rows.length > 0) {
+        return result.rows[0] as Feedback;
+      }
+      
+      throw new Error("Failed to create feedback");
+    } catch (error) {
+      console.error("Error in createFeedback:", error);
+      throw error;
+    }
+  }
+
+  // AppTester methods
+  async getAppTester(id: number): Promise<AppTester | undefined> {
+    const result = await this.db.select().from(appTesters).where(eq(appTesters.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getAppTesterByUserAndApp(userId: number, appId: number): Promise<AppTester | undefined> {
+    const result = await this.db
+      .select()
+      .from(appTesters)
+      .where(
+        and(
+          eq(appTesters.userId, userId),
+          eq(appTesters.appId, appId)
+        )
+      )
+      .limit(1);
+    return result[0];
+  }
+
+  async getAppTestersByUser(userId: number): Promise<AppTester[]> {
+    return await this.db
+      .select()
+      .from(appTesters)
+      .where(eq(appTesters.userId, userId))
+      .orderBy(desc(appTesters.createdAt));
+  }
+
+  async createAppTester(insertAppTester: InsertAppTester): Promise<AppTester> {
+    try {
+      // Prepare the app tester data with proper handling of nulls
+      const appTesterData = {
+        userId: insertAppTester.userId,
+        appId: insertAppTester.appId,
+        status: insertAppTester.status
+      };
+      
+      // Use a direct SQL query for insertion to avoid type issues
+      const result = await this.pool.query(`
+        INSERT INTO app_testers (
+          userId, appId, status
+        ) VALUES (
+          $1, $2, $3
+        ) RETURNING *
+      `, [
+        appTesterData.userId,
+        appTesterData.appId,
+        appTesterData.status
+      ]);
+      
+      if (result.rows.length > 0) {
+        return result.rows[0] as AppTester;
+      }
+      
+      throw new Error("Failed to create app tester");
+    } catch (error) {
+      console.error("Error in createAppTester:", error);
+      throw error;
+    }
+  }
+
+  async updateAppTesterStatus(id: number, status: string): Promise<AppTester | undefined> {
+    try {
+      const appTester = await this.getAppTester(id);
+      if (!appTester) return undefined;
+
+      // Use direct SQL for update to avoid type issues
+      const result = await this.pool.query(`
+        UPDATE app_testers 
+        SET status = $1
+        WHERE id = $2
+        RETURNING *
+      `, [status, id]);
+      
+      if (result.rows.length > 0) {
+        return result.rows[0] as AppTester;
+      }
+      
+      throw new Error("Failed to update app tester status");
+    } catch (error) {
+      console.error("Error in updateAppTesterStatus:", error);
+      throw error;
+    }
+  }
+}
+
+// For in-memory testing/development
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private apps: Map<number, App>;
   private feedbacks: Map<number, Feedback>;
   private appTesters: Map<number, AppTester>;
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
   currentUserId: number;
   currentAppId: number;
   currentFeedbackId: number;
@@ -93,8 +429,14 @@ export class MemStorage implements IStorage {
     const id = this.currentUserId++;
     const now = new Date();
     const user: User = { 
-      ...insertUser, 
       id, 
+      username: insertUser.username,
+      email: insertUser.email,
+      password: insertUser.password,
+      name: insertUser.name || null,
+      bio: insertUser.bio || null,
+      avatar: insertUser.avatar || null,
+      specialization: insertUser.specialization || null,
       points: 0, 
       isAdmin: false, 
       createdAt: now 
@@ -158,8 +500,16 @@ export class MemStorage implements IStorage {
     const id = this.currentAppId++;
     const now = new Date();
     const app: App = { 
-      ...insertApp, 
-      id, 
+      id,
+      title: insertApp.title,
+      description: insertApp.description,
+      type: insertApp.type,
+      shortDescription: insertApp.shortDescription || null,
+      downloadUrl: insertApp.downloadUrl,
+      // Ensure screenshots is always a properly formatted array or null
+      screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,
+      rewardPoints: insertApp.rewardPoints || 100,
+      userId: insertApp.userId,
       testerCount: 0, 
       createdAt: now 
     };
@@ -197,8 +547,13 @@ export class MemStorage implements IStorage {
     const id = this.currentFeedbackId++;
     const now = new Date();
     const feedback: Feedback = { 
-      ...insertFeedback, 
-      id, 
+      id,
+      userId: insertFeedback.userId,
+      appId: insertFeedback.appId,
+      rating: insertFeedback.rating,
+      content: insertFeedback.content,
+      bugs: insertFeedback.bugs || null,
+      suggestions: insertFeedback.suggestions || null,
       createdAt: now 
     };
     this.feedbacks.set(id, feedback);
@@ -250,4 +605,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Choose the appropriate storage implementation based on environment
+export const storage = process.env.DATABASE_URL 
+  ? new DatabaseStorage() 
+  : new MemStorage();

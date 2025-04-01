@@ -36,6 +36,8 @@ export const feedback = pgTable("feedback", {
   appId: integer("app_id").notNull(),
   rating: integer("rating").notNull(), // 1-5 stars
   content: text("content").notNull(),
+  bugs: text("bugs"),
+  suggestions: text("suggestions"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -74,6 +76,8 @@ export const insertFeedbackSchema = createInsertSchema(feedback).pick({
   appId: true,
   rating: true,
   content: true,
+  bugs: true,
+  suggestions: true,
 });
 
 export const insertAppTesterSchema = createInsertSchema(appTesters).pick({

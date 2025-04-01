@@ -30,8 +30,14 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Make sure we have a session secret
+  if (!process.env.SESSION_SECRET) {
+    console.warn("SESSION_SECRET environment variable not set. Using a random value for this session.");
+    process.env.SESSION_SECRET = randomBytes(32).toString('hex');
+  }
+
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "betabuddy-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,

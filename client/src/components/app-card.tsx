@@ -81,10 +81,11 @@ export function AppCard({ app }: { app: App }) {
           <div className="text-sm text-gray-500">{app.testerCount} testers</div>
         </div>
         <div className="mt-5">
-          <Link href={`/apps/${app.id}`}>
-            <a className="block w-full bg-primary hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded text-center">
-              Test Now
-            </a>
+          <Link 
+            href={`/apps/${app.id}`}
+            className="block w-full bg-primary hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded text-center"
+          >
+            Test Now
           </Link>
         </div>
       </div>

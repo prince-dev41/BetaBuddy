@@ -63,115 +63,117 @@ export default function LeaderboardPage() {
           </p>
         </div>
 
-        <div className="flex justify-end mb-6">
-          <Tabs value={view} onValueChange={setView} className="w-[200px]">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="grid">Grid</TabsTrigger>
-              <TabsTrigger value="table">Table</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <div>
+          <div className="flex justify-end mb-6">
+            <Tabs value={view} onValueChange={setView} className="w-[200px]">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="grid">Grid</TabsTrigger>
+                <TabsTrigger value="table">Table</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
 
-        {isLoading ? (
-          view === "grid" ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-lg shadow p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <Skeleton className="h-24 w-24 rounded-full mb-4" />
-                    <Skeleton className="h-6 w-1/2 mb-2" />
-                    <Skeleton className="h-4 w-1/3 mb-3" />
-                    <Skeleton className="h-6 w-1/3 rounded-full mb-3" />
-                    <Skeleton className="h-4 w-2/3" />
+          {isLoading ? (
+            view === "grid" ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div key={i} className="bg-white border border-gray-200 rounded-lg shadow p-6">
+                    <div className="flex flex-col items-center text-center">
+                      <Skeleton className="h-24 w-24 rounded-full mb-4" />
+                      <Skeleton className="h-6 w-1/2 mb-2" />
+                      <Skeleton className="h-4 w-1/3 mb-3" />
+                      <Skeleton className="h-6 w-1/3 rounded-full mb-3" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              <Skeleton className="h-[600px] w-full" />
-            </div>
-          )
-        ) : (
-          <>
-            {topTesters && topTesters.length > 0 ? (
-              <>
-                <TabsContent value="grid" className="mt-0">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {topTesters.map((tester, index) => (
-                      <div key={tester.id} className="relative">
-                        <div className="absolute top-2 left-2 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white shadow">
-                          <span className={`font-bold ${getRankColor(index + 1)}`}>
-                            {index + 1}
-                          </span>
-                        </div>
-                        <UserCard 
-                          user={{ 
-                            ...tester, 
-                            rating: 4.8 - (index * 0.05) 
-                          }} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="table" className="mt-0">
-                  <div className="bg-white shadow rounded-lg overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-16">Rank</TableHead>
-                          <TableHead>Tester</TableHead>
-                          <TableHead>Specialization</TableHead>
-                          <TableHead className="text-right">Points</TableHead>
-                          <TableHead className="text-right">Rating</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {topTesters.map((tester, index) => (
-                          <TableRow key={tester.id}>
-                            <TableCell className="font-medium">
-                              <div className="flex items-center justify-center">
-                                {getRankMedal(index + 1)}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center">
-                                <Avatar className="h-8 w-8 mr-2">
-                                  <AvatarImage src={tester.avatar || ""} alt={tester.username} />
-                                  <AvatarFallback>{getInitials(tester.name || tester.username)}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium">{tester.name || tester.username}</div>
-                                  <div className="text-xs text-gray-500">@{tester.username}</div>
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>{tester.specialization || "Beta Tester"}</TableCell>
-                            <TableCell className="text-right font-semibold">{tester.points}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex items-center justify-end">
-                                <span className="mr-1">{(4.8 - (index * 0.05)).toFixed(1)}</span>
-                                <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
-                                  <path fillRule="evenodd" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                </svg>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </TabsContent>
-              </>
-            ) : (
-              <div className="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
-                <p className="text-gray-500 text-lg">No testers found yet. Be the first!</p>
+                ))}
               </div>
-            )}
-          </>
-        )}
+            ) : (
+              <div className="bg-white shadow rounded-lg overflow-hidden">
+                <Skeleton className="h-[600px] w-full" />
+              </div>
+            )
+          ) : (
+            <>
+              {topTesters && topTesters.length > 0 ? (
+                <Tabs value={view} className="w-full">
+                  <TabsContent value="grid" className="mt-0">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      {topTesters.map((tester: any, index: number) => (
+                        <div key={tester.id} className="relative">
+                          <div className="absolute top-2 left-2 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white shadow">
+                            <span className={`font-bold ${getRankColor(index + 1)}`}>
+                              {index + 1}
+                            </span>
+                          </div>
+                          <UserCard 
+                            user={{ 
+                              ...tester, 
+                              rating: 4.8 - (index * 0.05) 
+                            }} 
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="table" className="mt-0">
+                    <div className="bg-white shadow rounded-lg overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-16">Rank</TableHead>
+                            <TableHead>Tester</TableHead>
+                            <TableHead>Specialization</TableHead>
+                            <TableHead className="text-right">Points</TableHead>
+                            <TableHead className="text-right">Rating</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {topTesters.map((tester: any, index: number) => (
+                            <TableRow key={tester.id}>
+                              <TableCell className="font-medium">
+                                <div className="flex items-center justify-center">
+                                  {getRankMedal(index + 1)}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center">
+                                  <Avatar className="h-8 w-8 mr-2">
+                                    <AvatarImage src={tester.avatar || ""} alt={tester.username} />
+                                    <AvatarFallback>{getInitials(tester.name || tester.username)}</AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <div className="font-medium">{tester.name || tester.username}</div>
+                                    <div className="text-xs text-gray-500">@{tester.username}</div>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>{tester.specialization || "Beta Tester"}</TableCell>
+                              <TableCell className="text-right font-semibold">{tester.points}</TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex items-center justify-end">
+                                  <span className="mr-1">{(4.8 - (index * 0.05)).toFixed(1)}</span>
+                                  <svg className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path fillRule="evenodd" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                  </svg>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              ) : (
+                <div className="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
+                  <p className="text-gray-500 text-lg">No testers found yet. Be the first!</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         <div className="mt-12 bg-indigo-50 rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-indigo-800 mb-4">How to Climb the Leaderboard</h2>

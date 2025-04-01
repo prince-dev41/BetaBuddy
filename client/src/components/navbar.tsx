@@ -87,7 +87,7 @@ export function Navbar() {
                   <span className="sr-only">Open user menu</span>
                   <Avatar>
                     <AvatarImage src={user.avatar || ""} alt={user.username} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(user.name || user.username)}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -173,7 +173,7 @@ export function Navbar() {
                 <div className="flex-shrink-0">
                   <Avatar>
                     <AvatarImage src={user.avatar || ""} alt={user.username} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(user.name || user.username)}</AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="ml-3">

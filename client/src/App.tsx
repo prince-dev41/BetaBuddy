@@ -26,7 +26,7 @@ function Router() {
       <Route path="/leaderboard" component={LeaderboardPage} />
       <Route path="/apps/:id" component={AppDetailsPage} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
-      <Route component={NotFound} />
+      <Route path="*" component={NotFound} />
     </Switch>
   );
 }

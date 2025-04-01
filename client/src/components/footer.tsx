@@ -86,9 +86,9 @@ export function Footer() {
                     {section.links.map((link, linkIndex) => (
                       <li key={linkIndex}>
                         <Link href={link.href}>
-                          <a className="text-base text-gray-300 hover:text-white">
+                          <div className="text-base text-gray-300 hover:text-white cursor-pointer">
                             {link.label}
-                          </a>
+                          </div>
                         </Link>
                       </li>
                     ))}
@@ -106,9 +106,9 @@ export function Footer() {
                     {section.links.map((link, linkIndex) => (
                       <li key={linkIndex}>
                         <Link href={link.href}>
-                          <a className="text-base text-gray-300 hover:text-white">
+                          <div className="text-base text-gray-300 hover:text-white cursor-pointer">
                             {link.label}
-                          </a>
+                          </div>
                         </Link>
                       </li>
                     ))}

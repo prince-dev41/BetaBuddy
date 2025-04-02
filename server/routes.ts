@@ -63,17 +63,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(401).json({ message: "Authentication required" });
   };
 
-  // Get all apps
+  // Get all apps with advanced filtering
   app.get("/api/apps", async (req, res, next) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
       const type = req.query.type as string | undefined;
+      const sort = req.query.sort as string | undefined;
+      const search = req.query.search as string | undefined;
+      const minRewards = req.query.minRewards ? parseInt(req.query.minRewards as string) : undefined;
+      const maxRewards = req.query.maxRewards ? parseInt(req.query.maxRewards as string) : undefined;
+      const popular = req.query.popular ? (req.query.popular === 'true') : undefined;
       
+      console.log(`Filtering apps - Type: ${type}, Sort: ${sort}, Search: ${search}, Min rewards: ${minRewards}, Max rewards: ${maxRewards}, Popular: ${popular}`);
+      
+      // Get apps with basic filtering from storage
       const apps = await storage.getApps(limit, type);
+      
+      // Apply additional filtering in memory
+      let filteredApps = [...apps];
+      
+      // Filter by search term (title, shortDescription, description)
+      if (search) {
+        const searchLower = search.toLowerCase();
+        filteredApps = filteredApps.filter(app => 
+          app.title.toLowerCase().includes(searchLower) || 
+          (app.shortDescription && app.shortDescription.toLowerCase().includes(searchLower)) ||
+          app.description.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      // Filter by reward points range
+      if (minRewards !== undefined) {
+        filteredApps = filteredApps.filter(app => app.rewardPoints >= minRewards);
+      }
+      
+      if (maxRewards !== undefined) {
+        filteredApps = filteredApps.filter(app => app.rewardPoints <= maxRewards);
+      }
+      
+      // Filter by popularity (tester count)
+      if (popular !== undefined) {
+        if (popular) {
+          // Sort by tester count if popular filter is applied
+          filteredApps.sort((a, b) => b.testerCount - a.testerCount);
+        }
+      }
+      
+      // Apply sorting (if not already sorted by popularity)
+      if (sort && !(popular && sort === 'popular')) {
+        switch(sort) {
+          case 'newest':
+            filteredApps.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            break;
+          case 'oldest':
+            filteredApps.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            break;
+          case 'popular':
+            filteredApps.sort((a, b) => b.testerCount - a.testerCount);
+            break;
+          case 'rewards':
+            filteredApps.sort((a, b) => b.rewardPoints - a.rewardPoints);
+            break;
+          default:
+            // Default sorting by created date (newest first)
+            filteredApps.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+      }
       
       // Return with developer info for each app
       const appsWithDevInfo = await Promise.all(
-        apps.map(async (app) => {
+        filteredApps.map(async (app) => {
           const developer = await storage.getUser(app.userId);
           return {
             ...app,

@@ -37,7 +37,7 @@ import CookiePolicyPage from "@/pages/cookie-policy-page";
 import ContactPage from "@/pages/contact-page";
 
 import React from 'react';
-import './App.css';
+import './index.css';
 import './i18n'; // Added i18n initialization
 
 

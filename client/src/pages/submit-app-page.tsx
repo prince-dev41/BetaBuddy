@@ -42,6 +42,7 @@ const submitAppSchema = z.object({
   type: z.enum(["web", "mobile", "desktop"], {
     required_error: "Please select an application type",
   }),
+  downloadUrl: z.string().url("Please enter a valid URL"),
   rewardPoints: z
     .number()
     .min(50, "Minimum reward is 50 points")
@@ -54,7 +55,6 @@ export default function SubmitAppPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [appFile, setAppFile] = useState<File | null>(null);
   const [screenshots, setScreenshots] = useState<File[]>([]);
   const [activeTab, setActiveTab] = useState("basic");
 
@@ -64,6 +64,7 @@ export default function SubmitAppPage() {
       title: "",
       shortDescription: "",
       description: "",
+      downloadUrl: "",
       rewardPoints: 100,
     },
   });
@@ -111,12 +112,6 @@ export default function SubmitAppPage() {
     },
   });
 
-  const handleAppFileChange = (files: File[]) => {
-    if (files.length > 0) {
-      setAppFile(files[0]);
-    }
-  };
-
   const handleScreenshotsChange = (files: File[]) => {
     if (files.length > 0) {
       setScreenshots(prev => [...prev, ...files].slice(0, 5));
@@ -128,10 +123,10 @@ export default function SubmitAppPage() {
   };
 
   const onSubmit = (values: SubmitAppFormValues) => {
-    if (!appFile) {
+    if (!values.downloadUrl) {
       toast({
-        title: "Missing app file",
-        description: "Please upload your application file",
+        title: "Missing application link",
+        description: "Please provide a link to your application",
         variant: "destructive",
       });
       return;
@@ -153,11 +148,9 @@ export default function SubmitAppPage() {
       formData.append('shortDescription', values.shortDescription);
     }
     formData.append('type', values.type);
+    formData.append('downloadUrl', values.downloadUrl);
     formData.append('rewardPoints', values.rewardPoints.toString());
     formData.append('userId', user!.id.toString());
-    
-    // Append app file
-    formData.append('app', appFile);
     
     // Append screenshots
     screenshots.forEach(screenshot => {
@@ -314,29 +307,25 @@ export default function SubmitAppPage() {
                   <TabsContent value="files" className="space-y-6">
                     <div className="space-y-4">
                       <div>
-                        <h3 className="text-lg font-medium mb-2">Application File</h3>
-                        <FileUpload
-                          accept=".zip,.apk,.dmg,.exe,.msi"
-                          maxFiles={1}
-                          maxSize={10}
-                          onFilesSelected={handleAppFileChange}
-                          className="mb-2"
+                        <h3 className="text-lg font-medium mb-2">Application Download Link</h3>
+                        <FormField
+                          control={form.control}
+                          name="downloadUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input 
+                                  placeholder="https://example.com/your-app-download-link" 
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Enter a direct link to download your application or access your web application
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                        {appFile && (
-                          <div className="flex items-center p-2 bg-gray-50 rounded border mt-2">
-                            <div className="flex-1 truncate">{appFile.name}</div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setAppFile(null)}
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        )}
-                        <p className="text-sm text-gray-500 mt-1">
-                          Upload your application file (ZIP, APK, DMG, EXE, MSI). Max 10MB.
-                        </p>
                       </div>
 
                       <div className="mt-6">

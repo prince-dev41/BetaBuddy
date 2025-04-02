@@ -182,7 +182,7 @@ export class DatabaseStorage implements IStorage {
         title: insertApp.title,
         description: insertApp.description,
         type: insertApp.type,
-        shortDescription: insertApp.shortDescription || null,
+        short_description: insertApp.shortDescription || null,
         downloadUrl: insertApp.downloadUrl,
         screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,
         rewardPoints: insertApp.rewardPoints || 100,
@@ -192,7 +192,7 @@ export class DatabaseStorage implements IStorage {
       // Use a direct SQL query for insertion to avoid type issues
       const result = await this.pool.query(`
         INSERT INTO apps (
-          title, description, type, shortDescription, downloadUrl, 
+          title, description, type, short_description, downloadUrl, 
           screenshots, rewardPoints, userId
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8
@@ -201,7 +201,7 @@ export class DatabaseStorage implements IStorage {
         appData.title,
         appData.description,
         appData.type,
-        appData.shortDescription,
+        appData.short_description,
         appData.downloadUrl,
         appData.screenshots,
         appData.rewardPoints,
@@ -504,7 +504,7 @@ export class MemStorage implements IStorage {
       title: insertApp.title,
       description: insertApp.description,
       type: insertApp.type,
-      shortDescription: insertApp.shortDescription || null,
+      shortDescription: insertApp.shortDescription || null, // Using camelCase for the in-memory storage
       downloadUrl: insertApp.downloadUrl,
       // Ensure screenshots is always a properly formatted array or null
       screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,

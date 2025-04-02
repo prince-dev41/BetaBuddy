@@ -1,8 +1,23 @@
 import { Link } from "wouter";
 import { Logo } from "@/components/ui/logo";
 import { FacebookIcon, TwitterIcon, GithubIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+  
+  // Liste des langues disponibles
+  const languages = [
+    { code: 'en', name: t('languages.en') },
+    { code: 'fr', name: t('languages.fr') }
+  ];
+  
+  // Changer de langue
+  const changeLanguage = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+  };
+  
   const socialLinks = [
     { icon: <FacebookIcon className="h-6 w-6" />, href: "#", label: "Facebook" },
     { icon: <TwitterIcon className="h-6 w-6" />, href: "#", label: "Twitter" },
@@ -11,39 +26,39 @@ export function Footer() {
 
   const footerSections = [
     {
-      title: "Platform",
+      title: t("footer.platform"),
       links: [
-        { label: "Submit App", href: "/submit-app" },
-        { label: "Browse Apps", href: "/discover" },
-        { label: "Leaderboard", href: "/leaderboard" },
-        { label: "Points System", href: "/points-system" },
+        { label: t("nav.submit"), href: "/submit-app" },
+        { label: t("discover.title"), href: "/discover" },
+        { label: t("nav.leaderboard"), href: "/leaderboard" },
+        { label: t("footer.pointsSystem"), href: "/points-system" },
       ],
     },
     {
-      title: "Resources",
+      title: t("footer.resources"),
       links: [
-        { label: "Testing Guidelines", href: "/testing-guidelines" },
-        { label: "Developer Resources", href: "/developer-resources" },
-        { label: "API Documentation", href: "/api-documentation" },
-        { label: "Community Forums", href: "/community-forums" },
+        { label: t("footer.testingGuidelines"), href: "/testing-guidelines" },
+        { label: t("footer.developerResources"), href: "/developer-resources" },
+        { label: t("footer.apiDocumentation"), href: "/api-documentation" },
+        { label: t("footer.communityForums"), href: "/community-forums" },
       ],
     },
     {
-      title: "Company",
+      title: t("footer.company"),
       links: [
-        { label: "About", href: "/about" },
-        { label: "Blog", href: "/blog" },
-        { label: "Partners", href: "/partners" },
-        { label: "Careers", href: "/careers" },
+        { label: t("footer.about"), href: "/about" },
+        { label: t("footer.blog"), href: "/blog" },
+        { label: t("footer.partners"), href: "/partners" },
+        { label: t("footer.careers"), href: "/careers" },
       ],
     },
     {
-      title: "Legal",
+      title: t("footer.legal"),
       links: [
-        { label: "Privacy", href: "/privacy" },
-        { label: "Terms", href: "/terms" },
-        { label: "Cookie Policy", href: "/cookie-policy" },
-        { label: "Contact", href: "/contact" },
+        { label: t("footer.privacy"), href: "/privacy" },
+        { label: t("footer.terms"), href: "/terms" },
+        { label: t("footer.cookies"), href: "/cookie-policy" },
+        { label: t("footer.contact"), href: "/contact" },
       ],
     },
   ];
@@ -60,7 +75,7 @@ export function Footer() {
               <span className="ml-2 text-xl font-bold text-white">BetaBuddy</span>
             </div>
             <p className="text-gray-300 text-base">
-              Connecting developers with real users to create better software through collaborative testing and feedback.
+              {t("home.subtitle")}
             </p>
             <div className="flex space-x-6">
               {socialLinks.map((link, index) => (
@@ -119,8 +134,31 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-700 pt-8">
+          {/* Sélecteur de langue */}
+          <div className="flex justify-center mt-4 mb-6">
+            <div className="px-4 py-2 bg-gray-700 rounded-lg">
+              <h3 className="text-sm font-semibold text-gray-300 mb-2">
+                {t('common.language')}:
+              </h3>
+              <div className="flex space-x-4">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`px-3 py-1 rounded-md text-sm ${
+                      i18n.language === lang.code 
+                        ? "bg-indigo-600 text-white" 
+                        : "bg-gray-600 text-gray-300 hover:bg-gray-500"
+                    }`}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
           <p className="text-base text-gray-400 xl:text-center">
-            &copy; {new Date().getFullYear()} BetaBuddy. All rights reserved.
+            &copy; {new Date().getFullYear()} BetaBuddy. {t('footer.copyright')}
           </p>
         </div>
       </div>

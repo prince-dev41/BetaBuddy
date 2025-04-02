@@ -1,24 +1,297 @@
 
 {
+  "common": {
+    "points": "Points",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "back": "Retour",
+    "next": "Suivant",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "all": "Tous",
+    "none": "Aucun",
+    "yes": "Oui",
+    "no": "Non",
+    "close": "Fermer",
+    "required": "Obligatoire",
+    "optional": "Optionnel",
+    "view": "Voir",
+    "download": "Télécharger",
+    "more": "Plus",
+    "less": "Moins",
+    "addNew": "Ajouter",
+    "success": "Succès",
+    "failed": "Échec",
+    "language": "Langue"
+  },
   "nav": {
     "home": "Accueil",
     "discover": "Découvrir",
     "submit": "Soumettre une App",
-    "login": "Connexion",
-    "signup": "S'inscrire"
+    "myApps": "Mes Applications",
+    "leaderboard": "Classement",
+    "profile": "Profil",
+    "logout": "Déconnexion",
+    "signin": "Connexion",
+    "signup": "Inscription"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
   },
   "hero": {
     "title": "Testez vos Apps avec des Utilisateurs Réels",
-    "subtitle": "Obtenez des retours précieux de notre communauté de testeurs"
+    "subtitle": "Obtenez des retours précieux de notre communauté de testeurs",
+    "getStarted": "Commencer"
   },
   "cta": {
     "developer": "Je suis Développeur",
-    "tester": "Je suis Testeur"
+    "tester": "Je suis Testeur",
+    "join": "Rejoindre Maintenant",
+    "learnMore": "En Savoir Plus"
+  },
+  "home": {
+    "featuredApps": "Applications en Vedette",
+    "topTesters": "Meilleurs Testeurs",
+    "howItWorks": "Comment ça Marche",
+    "recentActivity": "Activité Récente",
+    "testimonials": "Témoignages",
+    "steps": {
+      "step1": {
+        "title": "Soumettez votre Application",
+        "description": "Téléchargez votre application et fournissez tous les détails nécessaires"
+      },
+      "step2": {
+        "title": "Obtenez des Retours",
+        "description": "Recevez des commentaires détaillés de notre communauté de testeurs"
+      },
+      "step3": {
+        "title": "Améliorez et Itérez",
+        "description": "Utilisez les commentaires pour améliorer votre application"
+      }
+    }
+  },
+  "discover": {
+    "title": "Découvrir les Applications",
+    "subtitle": "Parcourez et testez les applications de nos développeurs",
+    "filters": {
+      "type": "Type d'App",
+      "rewards": "Points de Récompense",
+      "sort": "Trier Par",
+      "search": "Rechercher des apps...",
+      "sortOptions": {
+        "newest": "Plus Récentes",
+        "oldest": "Plus Anciennes",
+        "highestRewards": "Récompenses les Plus Élevées",
+        "lowestRewards": "Récompenses les Plus Basses",
+        "mostPopular": "Plus Populaires"
+      },
+      "types": {
+        "all": "Tous les Types",
+        "mobile": "Applications Mobiles",
+        "web": "Applications Web",
+        "desktop": "Applications Bureau",
+        "game": "Jeux",
+        "other": "Autres"
+      },
+      "apply": "Appliquer les Filtres",
+      "clear": "Effacer les Filtres"
+    },
+    "noResults": "Aucune application trouvée correspondant à vos critères",
+    "loadMore": "Charger Plus"
+  },
+  "appDetails": {
+    "testThisApp": "Tester Cette App",
+    "reward": "Récompense",
+    "testers": "Testeurs",
+    "developer": "Développeur",
+    "description": "Description",
+    "screenshots": "Captures d'écran",
+    "feedback": {
+      "title": "Soumettre des Commentaires",
+      "rating": "Note",
+      "content": "Commentaires",
+      "bugs": "Bugs Trouvés",
+      "suggestions": "Suggestions",
+      "submit": "Soumettre les Commentaires",
+      "success": "Merci pour vos commentaires !",
+      "error": "Échec de l'envoi des commentaires"
+    },
+    "previousFeedback": "Commentaires Précédents",
+    "noFeedback": "Pas encore de commentaires"
+  },
+  "submitApp": {
+    "title": "Soumettre Votre Application",
+    "subtitle": "Partagez votre application avec notre communauté de testeurs",
+    "form": {
+      "title": "Titre de l'App",
+      "description": "Description",
+      "shortDescription": "Courte Description",
+      "type": "Type d'App",
+      "downloadUrl": "URL de Téléchargement",
+      "rewardPoints": "Points de Récompense",
+      "screenshots": "Captures d'écran",
+      "drag": "Glissez-déposez des images ici ou cliquez pour parcourir",
+      "success": "Votre application a été soumise avec succès !",
+      "error": "Échec de la soumission de votre application"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion à Votre Compte",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Connexion",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "createAccount": "Créez-en un"
+    },
+    "register": {
+      "title": "Créer un Compte",
+      "username": "Nom d'utilisateur",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le Mot de passe",
+      "submit": "S'inscrire",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "login": "Connexion"
+    }
+  },
+  "profile": {
+    "title": "Votre Profil",
+    "personalInfo": "Informations Personnelles",
+    "name": "Nom",
+    "email": "Email",
+    "username": "Nom d'utilisateur",
+    "bio": "Biographie",
+    "specialization": "Spécialisation",
+    "pointsEarned": "Points Gagnés",
+    "appsTested": "Applications Testées",
+    "appsSubmitted": "Applications Soumises",
+    "updateProfile": "Mettre à jour le Profil",
+    "changePassword": "Changer le Mot de passe",
+    "uploadAvatar": "Télécharger un Avatar",
+    "saveChanges": "Enregistrer les Modifications",
+    "success": "Profil mis à jour avec succès !",
+    "error": "Échec de la mise à jour du profil"
+  },
+  "myApps": {
+    "title": "Mes Applications",
+    "subtitle": "Gérez vos applications soumises",
+    "tabs": {
+      "submitted": "Applications Soumises",
+      "tested": "Applications Testées"
+    },
+    "noApps": "Vous n'avez pas encore soumis d'applications",
+    "noTested": "Vous n'avez pas encore testé d'applications",
+    "viewFeedback": "Voir les Commentaires",
+    "editApp": "Modifier",
+    "deleteApp": "Supprimer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette application ?"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "subtitle": "Meilleurs contributeurs de notre communauté",
+    "rank": "Rang",
+    "user": "Utilisateur",
+    "points": "Points",
+    "appsTested": "Apps Testées",
+    "timeframe": {
+      "allTime": "Tout Temps",
+      "thisMonth": "Ce Mois",
+      "thisWeek": "Cette Semaine"
+    }
+  },
+  "feedback": {
+    "title": "Soumettre des Commentaires",
+    "form": {
+      "rating": "Note",
+      "feedback": "Commentaires",
+      "bugs": "Bugs Trouvés",
+      "suggestions": "Suggestions",
+      "submit": "Soumettre les Commentaires"
+    },
+    "success": "Vos commentaires ont été soumis avec succès !",
+    "error": "Échec de l'envoi de vos commentaires"
   },
   "footer": {
+    "platform": "Plateforme",
+    "pointsSystem": "Système de Points",
+    "resources": "Ressources",
+    "testingGuidelines": "Guide de Test",
+    "developerResources": "Ressources Développeurs",
+    "apiDocumentation": "Documentation API",
+    "communityForums": "Forums Communautaires",
+    "company": "Entreprise",
     "about": "À propos",
-    "contact": "Contact",
+    "blog": "Blog",
+    "partners": "Partenaires",
+    "careers": "Carrières",
+    "legal": "Légal",
+    "terms": "Conditions d'Utilisation",
     "privacy": "Politique de Confidentialité",
-    "terms": "Conditions d'Utilisation"
+    "cookies": "Politique de Cookies",
+    "contact": "Contact",
+    "copyright": "© 2025 BetaBuddy. Tous droits réservés.",
+    "language": "Langue"
+  },
+  "staticPages": {
+    "about": {
+      "title": "À propos de BetaBuddy",
+      "subtitle": "Connecter les Développeurs avec des Testeurs de Qualité",
+      "mission": "Notre Mission",
+      "missionText": "BetaBuddy vise à révolutionner le processus de test d'applications en créant un écosystème collaboratif où les développeurs obtiennent des retours précieux et les testeurs sont récompensés pour leurs contributions.",
+      "story": "Notre Histoire",
+      "storyText": "Fondé en 2025, BetaBuddy a commencé comme une solution à un problème courant rencontré par les développeurs indépendants : comment obtenir des tests de qualité sans un budget important. Ce qui a commencé comme une petite communauté est devenu une plateforme florissante utilisée par des développeurs et des testeurs du monde entier.",
+      "team": "Notre Équipe",
+      "teamText": "Nous sommes une équipe diversifiée de développeurs, de designers et de passionnés de produits déterminés à créer la meilleure plateforme pour les tests d'applications et les retours d'information."
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "lastUpdated": "Dernière mise à jour : 1 avril 2025",
+      "introduction": "Cette Politique de Confidentialité décrit comment BetaBuddy collecte, utilise et partage vos informations personnelles lorsque vous utilisez notre plateforme."
+    },
+    "terms": {
+      "title": "Conditions d'Utilisation",
+      "lastUpdated": "Dernière mise à jour : 1 avril 2025",
+      "introduction": "Ces Conditions d'Utilisation régissent votre utilisation de la plateforme et des services BetaBuddy."
+    },
+    "cookies": {
+      "title": "Politique de Cookies",
+      "lastUpdated": "Dernière mise à jour : 1 avril 2025",
+      "introduction": "Cette Politique de Cookies explique comment BetaBuddy utilise les cookies et technologies similaires pour vous reconnaître lorsque vous visitez notre plateforme."
+    },
+    "contact": {
+      "title": "Contactez-Nous",
+      "subtitle": "Nous serions ravis d'avoir de vos nouvelles",
+      "form": {
+        "name": "Nom",
+        "email": "Email",
+        "subject": "Sujet",
+        "message": "Message",
+        "submit": "Envoyer le Message"
+      },
+      "success": "Votre message a été envoyé avec succès !",
+      "error": "Échec de l'envoi de votre message"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page Non Trouvée",
+      "message": "La page que vous recherchez n'existe pas",
+      "button": "Retour à l'Accueil"
+    },
+    "serverError": {
+      "title": "Erreur Serveur",
+      "message": "Quelque chose s'est mal passé de notre côté",
+      "button": "Réessayer"
+    }
   }
 }

@@ -6,6 +6,7 @@ import {
   Bell, 
   Menu,
   X,
+  Globe,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -18,53 +19,23 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-
-// Translations (create files: locales/en/translation.json, locales/fr/translation.json)
-i18n
-  .use(initReactI18next)
-  .use(LanguageDetector)
-  .init({
-    resources: {
-      en: {
-        translation: {
-          'nav.home': 'Home',
-          'nav.discover': 'Discover',
-          'nav.submit': 'Submit App',
-          'nav.myApps': 'My Apps',
-          'nav.leaderboard': 'Leaderboard',
-          'nav.profile': 'Profile',
-          'nav.logout': 'Logout',
-          'nav.signin': 'Sign in',
-          'nav.signup': 'Sign up',
-        }
-      },
-      fr: {
-        translation: {
-          'nav.home': 'Accueil',
-          'nav.discover': 'Découvrir',
-          'nav.submit': 'Soumettre une application',
-          'nav.myApps': 'Mes applications',
-          'nav.leaderboard': 'Classement',
-          'nav.profile': 'Profil',
-          'nav.logout': 'Déconnexion',
-          'nav.signin': 'Connexion',
-          'nav.signup': 'Inscription',
-        }
-      }
-    },
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
-    }
-  });
 
 export function Navbar() {
   const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t } = useTranslation();
+  
+  // Liste des langues disponibles
+  const languages = [
+    { code: 'en', name: t('languages.en') },
+    { code: 'fr', name: t('languages.fr') }
+  ];
+  
+  // Changer de langue
+  const changeLanguage = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+  };
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -113,10 +84,33 @@ export function Navbar() {
               ))}
             </div>
           </div>
+          {/* Sélecteur de langue */}
+          <div className="hidden sm:flex sm:items-center sm:ml-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center p-1 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <Globe className="h-5 w-5 mr-1" />
+                <span className="text-sm font-medium">{i18n.language === 'fr' ? 'FR' : 'EN'}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{t('common.language')}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {languages.map((lang) => (
+                  <DropdownMenuItem 
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`cursor-pointer ${i18n.language === lang.code ? 'font-semibold text-primary' : ''}`}
+                  >
+                    {lang.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          
           {user ? (
             <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
               <div className="points-badge bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium relative overflow-hidden">
-                <span>{user.points} Points</span>
+                <span>{user.points} {t('common.points')}</span>
               </div>
               <button
                 type="button"
@@ -210,6 +204,31 @@ export function Navbar() {
                 {t(item.name)}
               </Link>
             ))}
+            
+            {/* Sélecteur de langue mobile */}
+            <div className="border-t border-gray-200 pt-2">
+              <div className="pl-3 pr-4 py-2 text-base font-medium text-gray-600">
+                {t('common.language')}:
+              </div>
+              <div className="flex pl-3 pr-4 space-x-4">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      changeLanguage(lang.code);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`px-3 py-1 rounded-md text-sm font-medium ${
+                      i18n.language === lang.code 
+                        ? "bg-indigo-50 text-primary" 
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
           {user ? (
             <div className="pt-4 pb-3 border-t border-gray-200">
@@ -226,7 +245,7 @@ export function Navbar() {
                 </div>
                 <div className="ml-auto flex items-center space-x-4">
                   <div className="points-badge bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    <span>{user.points} Points</span>
+                    <span>{user.points} {t('common.points')}</span>
                   </div>
                   <button
                     type="button"

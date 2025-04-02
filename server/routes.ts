@@ -154,34 +154,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { name: 'screenshots', maxCount: 5 }
   ]), async (req, res, next) => {
     try {
+      console.log("Received app submission request");
+      console.log("Request body:", req.body);
+      console.log("Authenticated user:", req.user);
+      
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      console.log("Uploaded files:", files ? Object.keys(files).map(key => `${key}: ${files[key].length} files`) : "No files");
       
       // Validate app data
-      const validatedData = insertAppSchema.parse({
+      const dataToValidate = {
         ...req.body,
         userId: req.user?.id,
         rewardPoints: parseInt(req.body.rewardPoints || "100"),
         screenshots: []
-      });
+      };
+      console.log("Data to validate:", dataToValidate);
       
-      // Process app file
-      if (files.app && files.app.length > 0) {
-        validatedData.downloadUrl = `/uploads/${files.app[0].filename}`;
-      } else {
-        return res.status(400).json({ message: "App file is required" });
+      try {
+        const validatedData = insertAppSchema.parse(dataToValidate);
+        console.log("Validation successful:", validatedData);
+        
+        // Process app file
+        if (files && files.app && files.app.length > 0) {
+          validatedData.downloadUrl = `/uploads/${files.app[0].filename}`;
+          console.log("Setting download URL:", validatedData.downloadUrl);
+        } else {
+          console.log("Missing app file");
+          return res.status(400).json({ message: "App file is required" });
+        }
+        
+        // Process screenshots
+        if (files && files.screenshots && files.screenshots.length > 0) {
+          validatedData.screenshots = files.screenshots.map(file => `/uploads/${file.filename}`);
+          console.log("Setting screenshots:", validatedData.screenshots);
+        }
+        
+        console.log("Creating app in storage with data:", validatedData);
+        const newApp = await storage.createApp(validatedData);
+        console.log("App created successfully:", newApp);
+        res.status(201).json(newApp);
+      } catch (validationError) {
+        if (validationError instanceof z.ZodError) {
+          console.error("Validation error:", validationError.errors);
+          return res.status(400).json({ message: validationError.errors[0].message });
+        }
+        throw validationError;
       }
-      
-      // Process screenshots
-      if (files.screenshots && files.screenshots.length > 0) {
-        validatedData.screenshots = files.screenshots.map(file => `/uploads/${file.filename}`);
-      }
-      
-      const newApp = await storage.createApp(validatedData);
-      res.status(201).json(newApp);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: error.errors[0].message });
-      }
+      console.error("Error in app submission:", error);
       next(error);
     }
   });

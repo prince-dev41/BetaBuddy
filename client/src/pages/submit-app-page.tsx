@@ -70,18 +70,28 @@ export default function SubmitAppPage() {
 
   const submitMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const res = await fetch("/api/apps", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      console.log("Submitting app form data");
       
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to submit app");
+      try {
+        const res = await fetch("/api/apps", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+        
+        console.log("Response status:", res.status);
+        
+        if (!res.ok) {
+          const error = await res.json();
+          console.error("Error response:", error);
+          throw new Error(error.message || "Failed to submit app");
+        }
+        
+        return res.json();
+      } catch (error) {
+        console.error("Fetch error:", error);
+        throw error;
       }
-      
-      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/my/apps"] });

@@ -436,7 +436,7 @@ export default function DiscoverPage() {
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {apps && apps.length > 0 ? (
-                apps.map((app) => <AppCard key={app.id} app={app} />)
+                apps.map((app: any) => <AppCard key={app.id} app={app} />)
               ) : (
                 <div className="col-span-3 text-center py-12">
                   <p className="text-gray-500 text-lg mb-4">No applications found matching your criteria.</p>

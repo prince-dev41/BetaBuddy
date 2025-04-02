@@ -43,11 +43,11 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/discover" component={DiscoverPage} />
-      <ProtectedRoute path="/my-apps" component={MyAppsPage} />
-      <ProtectedRoute path="/submit-app" component={SubmitAppPage} />
+      <ProtectedRoute path="/my-apps" component={() => <MyAppsPage />} />
+      <ProtectedRoute path="/submit-app" component={() => <SubmitAppPage />} />
       <Route path="/leaderboard" component={LeaderboardPage} />
       <Route path="/apps/:id" component={AppDetailsPage} />
-      <ProtectedRoute path="/profile" component={ProfilePage} />
+      <ProtectedRoute path="/profile" component={() => <ProfilePage />} />
 
       {/* Platform pages */}
       <Route path="/points-system" component={PointsSystemPage} />

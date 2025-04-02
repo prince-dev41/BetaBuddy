@@ -16,21 +16,65 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+// Translations (create files: locales/en/translation.json, locales/fr/translation.json)
+i18n
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .init({
+    resources: {
+      en: {
+        translation: {
+          'nav.home': 'Home',
+          'nav.discover': 'Discover',
+          'nav.submit': 'Submit App',
+          'nav.myApps': 'My Apps',
+          'nav.leaderboard': 'Leaderboard',
+          'nav.profile': 'Profile',
+          'nav.logout': 'Logout',
+          'nav.signin': 'Sign in',
+          'nav.signup': 'Sign up',
+        }
+      },
+      fr: {
+        translation: {
+          'nav.home': 'Accueil',
+          'nav.discover': 'Découvrir',
+          'nav.submit': 'Soumettre une application',
+          'nav.myApps': 'Mes applications',
+          'nav.leaderboard': 'Classement',
+          'nav.profile': 'Profil',
+          'nav.logout': 'Déconnexion',
+          'nav.signin': 'Connexion',
+          'nav.signup': 'Inscription',
+        }
+      }
+    },
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    }
+  });
 
 export function Navbar() {
   const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logoutMutation.mutate();
   };
 
   const navItems = [
-    { name: "Discover", path: "/discover" },
-    { name: "My Apps", path: "/my-apps" },
-    { name: "Submit App", path: "/submit-app" },
-    { name: "Leaderboard", path: "/leaderboard" },
+    { name: 'nav.home', path: "/" },
+    { name: 'nav.discover', path: "/discover" },
+    { name: 'nav.submit', path: "/submit-app" },
+    { name: 'nav.leaderboard', path: "/leaderboard" },
   ];
 
   const getInitials = (name?: string) => {
@@ -64,7 +108,7 @@ export function Navbar() {
                       : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                 >
-                  {item.name}
+                  {t(item.name)}
                 </Link>
               ))}
             </div>
@@ -100,17 +144,17 @@ export function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="w-full cursor-pointer">
-                      Profile
+                      {t('nav.profile')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/my-apps" className="w-full cursor-pointer">
-                      My Apps
+                      {t('nav.myApps')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-                    Logout
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -121,13 +165,13 @@ export function Navbar() {
                 href="/auth"
                 className="text-primary hover:text-indigo-700 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Sign in
+                {t('nav.signin')}
               </Link>
               <Link 
                 href="/auth"
                 className="bg-primary hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Sign up
+                {t('nav.signup')}
               </Link>
             </div>
           )}
@@ -163,7 +207,7 @@ export function Navbar() {
                 } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {item.name}
+                {t(item.name)}
               </Link>
             ))}
           </div>
@@ -199,7 +243,7 @@ export function Navbar() {
                   className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Your Profile
+                  {t('nav.profile')}
                 </Link>
                 <button
                   onClick={() => {
@@ -208,7 +252,7 @@ export function Navbar() {
                   }}
                   className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                 >
-                  Sign out
+                  {t('nav.logout')}
                 </button>
               </div>
             </div>
@@ -220,14 +264,14 @@ export function Navbar() {
                   className="text-primary hover:text-indigo-700 px-4 py-2 text-base font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign in
+                  {t('nav.signin')}
                 </Link>
                 <Link 
                   href="/auth"
                   className="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-base font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign up
+                  {t('nav.signup')}
                 </Link>
               </div>
             </div>

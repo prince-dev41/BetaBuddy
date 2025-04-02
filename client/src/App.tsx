@@ -36,6 +36,11 @@ import TermsPage from "@/pages/terms-page";
 import CookiePolicyPage from "@/pages/cookie-policy-page";
 import ContactPage from "@/pages/contact-page";
 
+import React from 'react';
+import './App.css';
+import './i18n'; // Added i18n initialization
+
+
 function Router() {
   return (
     <Switch>

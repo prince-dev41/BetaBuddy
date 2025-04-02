@@ -1,0 +1,24 @@
+
+{
+  "nav": {
+    "home": "Accueil",
+    "discover": "Découvrir",
+    "submit": "Soumettre une App",
+    "login": "Connexion",
+    "signup": "S'inscrire"
+  },
+  "hero": {
+    "title": "Testez vos Apps avec des Utilisateurs Réels",
+    "subtitle": "Obtenez des retours précieux de notre communauté de testeurs"
+  },
+  "cta": {
+    "developer": "Je suis Développeur",
+    "tester": "Je suis Testeur"
+  },
+  "footer": {
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation"
+  }
+}

@@ -1,0 +1,24 @@
+
+{
+  "nav": {
+    "home": "Home",
+    "discover": "Discover",
+    "submit": "Submit App",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "hero": {
+    "title": "Test Your Apps with Real Users",
+    "subtitle": "Get valuable feedback from our community of testers"
+  },
+  "cta": {
+    "developer": "I'm a Developer",
+    "tester": "I'm a Tester"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

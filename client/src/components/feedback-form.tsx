@@ -14,6 +14,8 @@ import { apiRequest } from "@/lib/queryClient";
 const feedbackSchema = z.object({
   rating: z.number().min(1, "Please select a rating").max(5),
   content: z.string().min(30, "Feedback must be at least 30 characters"),
+  bugs: z.string().optional(),
+  suggestions: z.string().optional(),
 });
 
 type FeedbackFormValues = z.infer<typeof feedbackSchema>;
@@ -34,6 +36,8 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
     defaultValues: {
       rating: 0,
       content: "",
+      bugs: "",
+      suggestions: "",
     },
   });
 
@@ -140,6 +144,48 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
                   </FormControl>
                   <FormDescription>
                     Detailed, constructive feedback is most helpful for developers.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="bugs"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bugs Found</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Did you encounter any bugs or issues? Describe them with steps to reproduce if possible."
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Helping developers identify bugs is extremely valuable.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="suggestions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Suggestions for Improvement</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="What features would make this application better? How could existing features be improved?"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Your ideas can help shape the future of this application.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

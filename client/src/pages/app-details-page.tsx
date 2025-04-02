@@ -49,11 +49,11 @@ export default function AppDetailsPage() {
   });
 
   const isAlreadyTesting = testingApps?.some(
-    (tester) => tester.appId === parseInt(params.id)
+    (tester: { appId: number }) => tester.appId === parseInt(params.id)
   );
 
   const hasCompletedTesting = testingApps?.some(
-    (tester) => tester.appId === parseInt(params.id) && tester.status === "completed"
+    (tester: { appId: number, status: string }) => tester.appId === parseInt(params.id) && tester.status === "completed"
   );
 
   // Mutation to start testing an app
@@ -240,7 +240,7 @@ export default function AppDetailsPage() {
                 <TabsContent value="feedback">
                   {app.feedback && app.feedback.length > 0 ? (
                     <div className="space-y-6">
-                      {app.feedback.map((feedback) => (
+                      {app.feedback.map((feedback: any) => (
                         <Card key={feedback.id} className="overflow-hidden">
                           <CardContent className="p-0">
                             <div className="bg-gray-50 p-4 flex items-center justify-between">
@@ -269,8 +269,25 @@ export default function AppDetailsPage() {
                                 ))}
                               </div>
                             </div>
-                            <div className="p-4">
-                              <p className="text-gray-700 whitespace-pre-line">{feedback.content}</p>
+                            <div className="p-4 space-y-4">
+                              <div>
+                                <h4 className="font-medium text-gray-900 mb-2">General Feedback</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{feedback.content}</p>
+                              </div>
+                              
+                              {feedback.bugs && (
+                                <div>
+                                  <h4 className="font-medium text-red-600 mb-2">Bugs Found</h4>
+                                  <p className="text-gray-700 whitespace-pre-line">{feedback.bugs}</p>
+                                </div>
+                              )}
+                              
+                              {feedback.suggestions && (
+                                <div>
+                                  <h4 className="font-medium text-blue-600 mb-2">Suggestions for Improvement</h4>
+                                  <p className="text-gray-700 whitespace-pre-line">{feedback.suggestions}</p>
+                                </div>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -338,6 +355,8 @@ export default function AppDetailsPage() {
                     <p className="mb-1">After testing, you'll be able to:</p>
                     <ul className="list-disc list-inside space-y-1">
                       <li>Provide detailed feedback</li>
+                      <li>Report bugs you encounter</li>
+                      <li>Suggest improvements</li>
                       <li>Rate the application</li>
                       <li>Earn {app.rewardPoints} points</li>
                     </ul>

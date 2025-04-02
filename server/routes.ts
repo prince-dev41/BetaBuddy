@@ -150,7 +150,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create app
   app.post("/api/apps", isAuthenticated, upload.fields([
-    { name: 'app', maxCount: 1 },
     { name: 'screenshots', maxCount: 5 }
   ]), async (req, res, next) => {
     try {
@@ -174,19 +173,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const validatedData = insertAppSchema.parse(dataToValidate);
         console.log("Validation successful:", validatedData);
         
-        // Process app file
-        if (files && files.app && files.app.length > 0) {
-          validatedData.downloadUrl = `/uploads/${files.app[0].filename}`;
-          console.log("Setting download URL:", validatedData.downloadUrl);
-        } else {
-          console.log("Missing app file");
-          return res.status(400).json({ message: "App file is required" });
-        }
+        // Use the provided download URL from the request
+        console.log("Using provided download URL:", validatedData.downloadUrl);
         
         // Process screenshots
         if (files && files.screenshots && files.screenshots.length > 0) {
           validatedData.screenshots = files.screenshots.map(file => `/uploads/${file.filename}`);
           console.log("Setting screenshots:", validatedData.screenshots);
+        } else {
+          console.log("Missing screenshots");
+          return res.status(400).json({ message: "At least one screenshot is required" });
         }
         
         console.log("Creating app in storage with data:", validatedData);

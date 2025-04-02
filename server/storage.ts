@@ -183,17 +183,17 @@ export class DatabaseStorage implements IStorage {
         description: insertApp.description,
         type: insertApp.type,
         short_description: insertApp.shortDescription || null,
-        downloadUrl: insertApp.downloadUrl,
-        screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,
-        rewardPoints: insertApp.rewardPoints || 100,
-        userId: insertApp.userId
+        download_url: insertApp.downloadUrl,
+        screenshots: Array.isArray(insertApp.screenshots) ? [...insertApp.screenshots] : null,
+        reward_points: insertApp.rewardPoints || 100,
+        user_id: insertApp.userId
       };
       
       // Use a direct SQL query for insertion to avoid type issues
       const result = await this.pool.query(`
         INSERT INTO apps (
-          title, description, type, short_description, downloadUrl, 
-          screenshots, rewardPoints, userId
+          title, description, type, short_description, download_url, 
+          screenshots, reward_points, user_id
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8
         ) RETURNING *
@@ -202,10 +202,10 @@ export class DatabaseStorage implements IStorage {
         appData.description,
         appData.type,
         appData.short_description,
-        appData.downloadUrl,
+        appData.download_url,
         appData.screenshots,
-        appData.rewardPoints,
-        appData.userId
+        appData.reward_points,
+        appData.user_id
       ]);
       
       if (result.rows.length > 0) {
@@ -250,8 +250,8 @@ export class DatabaseStorage implements IStorage {
     try {
       // Prepare the feedback data with proper handling of nulls
       const feedbackData = {
-        appId: insertFeedback.appId,
-        userId: insertFeedback.userId,
+        app_id: insertFeedback.appId,
+        user_id: insertFeedback.userId,
         rating: insertFeedback.rating,
         content: insertFeedback.content,
         bugs: insertFeedback.bugs || null,
@@ -261,13 +261,13 @@ export class DatabaseStorage implements IStorage {
       // Use a direct SQL query for insertion to avoid type issues
       const result = await this.pool.query(`
         INSERT INTO feedback (
-          appId, userId, rating, content, bugs, suggestions
+          app_id, user_id, rating, content, bugs, suggestions
         ) VALUES (
           $1, $2, $3, $4, $5, $6
         ) RETURNING *
       `, [
-        feedbackData.appId,
-        feedbackData.userId,
+        feedbackData.app_id,
+        feedbackData.user_id,
         feedbackData.rating,
         feedbackData.content,
         feedbackData.bugs,
@@ -317,21 +317,21 @@ export class DatabaseStorage implements IStorage {
     try {
       // Prepare the app tester data with proper handling of nulls
       const appTesterData = {
-        userId: insertAppTester.userId,
-        appId: insertAppTester.appId,
+        user_id: insertAppTester.userId,
+        app_id: insertAppTester.appId,
         status: insertAppTester.status
       };
       
       // Use a direct SQL query for insertion to avoid type issues
       const result = await this.pool.query(`
         INSERT INTO app_testers (
-          userId, appId, status
+          user_id, app_id, status
         ) VALUES (
           $1, $2, $3
         ) RETURNING *
       `, [
-        appTesterData.userId,
-        appTesterData.appId,
+        appTesterData.user_id,
+        appTesterData.app_id,
         appTesterData.status
       ]);
       
@@ -507,7 +507,7 @@ export class MemStorage implements IStorage {
       shortDescription: insertApp.shortDescription || null, // Using camelCase for the in-memory storage
       downloadUrl: insertApp.downloadUrl,
       // Ensure screenshots is always a properly formatted array or null
-      screenshots: Array.isArray(insertApp.screenshots) ? insertApp.screenshots : null,
+      screenshots: Array.isArray(insertApp.screenshots) ? [...insertApp.screenshots] : null,
       rewardPoints: insertApp.rewardPoints || 100,
       userId: insertApp.userId,
       testerCount: 0, 

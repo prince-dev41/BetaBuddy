@@ -73,7 +73,7 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Submit Feedback</DialogTitle>
           <DialogDescription>
@@ -82,7 +82,7 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="rating"
@@ -138,7 +138,7 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="Please share your experience with this application. What worked well? What could be improved? Did you encounter any bugs or issues?"
-                      className="min-h-[150px]"
+                      className="min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
@@ -159,7 +159,7 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="Did you encounter any bugs or issues? Describe them with steps to reproduce if possible."
-                      className="min-h-[100px]"
+                      className="min-h-[80px]"
                       {...field}
                     />
                   </FormControl>
@@ -180,7 +180,7 @@ export function FeedbackForm({ appId, onClose, onSuccess }: FeedbackFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="What features would make this application better? How could existing features be improved?"
-                      className="min-h-[100px]"
+                      className="min-h-[80px]"
                       {...field}
                     />
                   </FormControl>

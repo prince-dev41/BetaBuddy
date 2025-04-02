@@ -62,7 +62,7 @@ export class DatabaseStorage implements IStorage {
   constructor() {
     // Create the database pool
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: "postgresql://neondb_owner:npg_bNDtJhi56sFp@ep-sweet-wildflower-a6evg8oe.us-west-2.aws.neon.tech/neondb?sslmode=require",
     });
 
     // Initialize drizzle with the PostgreSQL pool
@@ -625,6 +625,6 @@ export class MemStorage implements IStorage {
 }
 
 // Choose the appropriate storage implementation based on environment
-export const storage = process.env.DATABASE_URL 
+export const storage = "postgresql://neondb_owner:npg_bNDtJhi56sFp@ep-sweet-wildflower-a6evg8oe.us-west-2.aws.neon.tech/neondb?sslmode=require"
   ? new DatabaseStorage() 
   : new MemStorage();

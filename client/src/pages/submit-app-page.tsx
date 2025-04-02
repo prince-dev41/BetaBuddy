@@ -145,7 +145,7 @@ export default function SubmitAppPage() {
     formData.append('title', values.title);
     formData.append('description', values.description);
     if (values.shortDescription) {
-      formData.append('shortDescription', values.shortDescription);
+      formData.append('short_description', values.shortDescription);
     }
     formData.append('type', values.type);
     formData.append('downloadUrl', values.downloadUrl);

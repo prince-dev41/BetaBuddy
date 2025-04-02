@@ -184,7 +184,7 @@ export class DatabaseStorage implements IStorage {
         type: insertApp.type,
         short_description: insertApp.shortDescription || null,
         download_url: insertApp.downloadUrl,
-        screenshots: Array.isArray(insertApp.screenshots) ? [...insertApp.screenshots] : null,
+        screenshots: Array.isArray(insertApp.screenshots) ? JSON.stringify(insertApp.screenshots) : null,
         reward_points: insertApp.rewardPoints || 100,
         user_id: insertApp.userId
       };

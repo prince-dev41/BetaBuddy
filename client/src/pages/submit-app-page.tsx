@@ -187,18 +187,18 @@ export default function SubmitAppPage() {
 
   return (
     <Layout>
-      <div className="py-10 container max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Submit Your Application</h1>
-          <p className="mt-2 text-lg text-gray-600">
-            Share your application with our community of beta testers and get valuable feedback.
+      <div className="py-10 container max-w-5xl mx-auto">
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">Submit Your Application</h1>
+          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Share your application with our community of beta testers and get valuable feedback to improve your product.
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Submit a New Application</CardTitle>
-            <CardDescription>
+        <Card className="shadow-lg border-t-4 border-t-purple-500">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl text-center">Submit a New Application</CardTitle>
+            <CardDescription className="text-center text-base mt-2">
               Fill out the form below to submit your application for beta testing.
             </CardDescription>
           </CardHeader>
@@ -298,8 +298,12 @@ export default function SubmitAppPage() {
                     />
 
                     <div className="flex justify-end">
-                      <Button type="button" onClick={nextTab}>
-                        Next
+                      <Button 
+                        type="button" 
+                        onClick={nextTab}
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                      >
+                        Next <span className="ml-1">→</span>
                       </Button>
                     </div>
                   </TabsContent>
@@ -368,11 +372,20 @@ export default function SubmitAppPage() {
                     </div>
 
                     <div className="flex justify-between">
-                      <Button type="button" variant="outline" onClick={prevTab}>
-                        Previous
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={prevTab}
+                        className="border-purple-500 text-purple-600 hover:text-purple-700"
+                      >
+                        <span className="mr-1">←</span> Previous
                       </Button>
-                      <Button type="button" onClick={nextTab}>
-                        Next
+                      <Button 
+                        type="button" 
+                        onClick={nextTab}
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                      >
+                        Next <span className="ml-1">→</span>
                       </Button>
                     </div>
                   </TabsContent>
@@ -412,13 +425,18 @@ export default function SubmitAppPage() {
                     </div>
 
                     <div className="flex justify-between">
-                      <Button type="button" variant="outline" onClick={prevTab}>
-                        Previous
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={prevTab}
+                        className="border-purple-500 text-purple-600 hover:text-purple-700"
+                      >
+                        <span className="mr-1">←</span> Previous
                       </Button>
                       <Button
                         type="submit"
                         disabled={submitMutation.isPending}
-                        className="flex items-center gap-2"
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 flex items-center gap-2"
                       >
                         {submitMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                         Submit Application

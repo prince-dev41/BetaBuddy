@@ -131,16 +131,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserPoints(userId: number, points: number): Promise<User | undefined> {
-    const user = await this.getUser(userId);
-    if (!user) return undefined;
-
-    const [updatedUser] = await this.db
-      .update(users)
-      .set({ points: user.points + points })
-      .where(eq(users.id, userId))
-      .returning();
-
-    return updatedUser;
+    try {
+      console.log(`updateUserPoints: Updating user ${userId} with ${points} points`);
+      const user = await this.getUser(userId);
+      if (!user) {
+        console.log(`updateUserPoints: User ${userId} not found`);
+        return undefined;
+      }
+      
+      console.log(`updateUserPoints: Current points: ${user.points}, adding ${points}`);
+      
+      // Use a direct SQL query for points update to ensure we get the result
+      const result = await this.pool.query(`
+        UPDATE users 
+        SET points = points + $1
+        WHERE id = $2
+        RETURNING *
+      `, [points, userId]);
+      
+      if (result.rows.length > 0) {
+        console.log(`updateUserPoints: Updated successfully, new points: ${result.rows[0].points}`);
+        return result.rows[0] as User;
+      }
+      
+      console.log(`updateUserPoints: Update failed, no rows returned`);
+      return undefined;
+    } catch (error) {
+      console.error("Error in updateUserPoints:", error);
+      throw error;
+    }
   }
 
   async getTopTesters(limit: number): Promise<User[]> {

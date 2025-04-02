@@ -311,7 +311,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updateAppTesterStatus(appTester.id, "completed");
       
       // Award points to the tester
-      await storage.updateUserPoints(userId, app.rewardPoints);
+      console.log(`Awarding ${app.rewardPoints} points to user ${userId}`);
+      try {
+        const updatedUser = await storage.updateUserPoints(userId, app.rewardPoints);
+        console.log("User points updated successfully:", updatedUser?.points);
+      } catch (pointsError) {
+        console.error("Error updating user points:", pointsError);
+      }
       
       res.status(201).json(feedback);
     } catch (error) {
